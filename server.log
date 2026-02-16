@@ -1,0 +1,24 @@
+
+> fileserver@1.0.0 dev
+> npx tsc && node dist/index.js
+
+Server is running at http://localhost:8080
+IN LOOP with word: kerfuffle cleanedBody: I had something interesting for breakfast
+IN LOOP with word: sharbert cleanedBody: I had something interesting for breakfast
+IN LOOP with word: fornax cleanedBody: I had something interesting for breakfast
+IN LOOP with word: Kerfuffle cleanedBody: I had something interesting for breakfast
+IN LOOP with word: Sharbert cleanedBody: I had something interesting for breakfast
+IN LOOP with word: Fornax cleanedBody: I had something interesting for breakfast
+IN LOOP with word: kerfuffle cleanedBody: I hear Mastodon is better than Chirpy. sharbert I need to migrate
+IN LOOP with word: sharbert cleanedBody: I hear Mastodon is better than Chirpy. sharbert I need to migrate
+IN LOOP with word: fornax cleanedBody: I hear Mastodon is better than Chirpy. **** I need to migrate
+IN LOOP with word: Kerfuffle cleanedBody: I hear Mastodon is better than Chirpy. **** I need to migrate
+IN LOOP with word: Sharbert cleanedBody: I hear Mastodon is better than Chirpy. **** I need to migrate
+IN LOOP with word: Fornax cleanedBody: I hear Mastodon is better than Chirpy. **** I need to migrate
+IN LOOP with word: kerfuffle cleanedBody: I really need a kerfuffle to go to bed sooner, Fornax !
+IN LOOP with word: sharbert cleanedBody: I really need a **** to go to bed sooner, Fornax !
+IN LOOP with word: fornax cleanedBody: I really need a **** to go to bed sooner, Fornax !
+IN LOOP with word: Kerfuffle cleanedBody: I really need a **** to go to bed sooner, Fornax !
+IN LOOP with word: Sharbert cleanedBody: I really need a **** to go to bed sooner, Fornax !
+IN LOOP with word: Fornax cleanedBody: I really need a **** to go to bed sooner, Fornax !
+[NON-OK] POST /api/validate_chirp - Status: 400
