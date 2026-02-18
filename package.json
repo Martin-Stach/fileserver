@@ -10,7 +10,8 @@
 		"dev": "npx tsc && node dist/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"generate": "drizzle-kit generate",
-		"migrate": "drizzle-kit migrate"
+		"migrate": "drizzle-kit migrate",
+		"dev-watch": "tsx watch src/index.ts"
 	},
 	"keywords": [],
 	"author": "",
@@ -19,6 +20,7 @@
 		"@types/express": "^5.0.6",
 		"@types/node": "^25.0.10",
 		"drizzle-kit": "^0.31.9",
+		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"
 	},
 	"dependencies": {
