@@ -18,7 +18,7 @@ export async function handlerUsersCreate(req: Request, res: Response) {
     const newUser = await createUser({ email: params.email });
 
     if (!newUser) {
-        throw new BadRequestError("Email already exists");
+        throw new Error("Email already exists");
     }
 
     respondWithJSON(

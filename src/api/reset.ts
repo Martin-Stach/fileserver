@@ -1,8 +1,7 @@
 import type { Request, Response } from "express";
 import { config } from "../config.js";
 import { respondWithError } from "./json.js";
-import { db } from "../db/index.js"
-import { users } from "../db/schema.js";
+import { resetUsers } from "src/db/queries/users.js";
 
 export async function handlerReset(_: Request, res: Response) {
 
@@ -11,10 +10,9 @@ export async function handlerReset(_: Request, res: Response) {
 		return;
 	}
 
-	await db.delete(users);
+	await resetUsers();
 
 	config.api.fileServerHits = 0;
 	res.write("Hits reset to 0");
 	res.end();
-
 }
