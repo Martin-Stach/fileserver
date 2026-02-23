@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
+import { createChirp, getChrip, getChrips } from "src/db/queries/chirps.js";
+import type { NewChirp } from "src/db/schema.js";
 import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
-import { createChirp, getChrips } from "src/db/queries/chirps.js";
-import { NewChirp } from "src/db/schema.js";
 
 export function handlerChirpsValidate(chirp: string) {
 	let validatedChirp = chirp;
@@ -70,4 +70,18 @@ export async function handlerChirpsGet(_: Request, res: Response) {
 	}
 
 	respondWithJSON(res, 200, result);
+}
+
+export async function handlerChirpsGetSingle(req: Request, res: Response) {
+	const { chirpId } = req.params;
+	if (typeof chirpId !== "string") {
+		throw new BadRequestError("Invalid Chirp ID");
+	}
+
+	const chirp: NewChirp = await getChrip(chirpId);
+	if (!chirp) {
+		throw new Error("No Chirp found with provided ID");
+	}
+
+	respondWithJSON(res, 200, chirp);
 }

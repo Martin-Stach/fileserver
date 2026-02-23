@@ -5,6 +5,7 @@ import postgres from "postgres";
 import {
 	handlerChirpsCreate,
 	handlerChirpsGet,
+	handlerChirpsGetSingle,
 	handlerChirpsValidate,
 } from "./api/chirps.js";
 import { handlerMetrics } from "./api/metrics.js";
@@ -48,6 +49,10 @@ app.post("/api/chirps", (req, res, next) => {
 
 app.get("/api/chirps", (req, res, next) => {
 	Promise.resolve(handlerChirpsGet(req, res).catch(next));
+});
+
+app.get("/api/chirps/:chirpId", (req, res, next) => {
+	Promise.resolve(handlerChirpsGetSingle(req, res).catch(next));
 });
 
 app.use(errorMiddleWare);
