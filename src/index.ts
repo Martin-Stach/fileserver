@@ -6,7 +6,6 @@ import {
 	handlerChirpsCreate,
 	handlerChirpsGet,
 	handlerChirpsGetSingle,
-	handlerChirpsValidate,
 } from "./api/chirps.js";
 import { handlerMetrics } from "./api/metrics.js";
 import {
@@ -16,8 +15,8 @@ import {
 } from "./api/middleware.js";
 import { handlerReadiness } from "./api/readiness.js";
 import { handlerReset } from "./api/reset.js";
-import { config } from "./config.js";
 import { handlerUsersCreate } from "./api/users.js";
+import { config } from "./config.js";
 
 const migrationClient = postgres(config.db.url, { max: 1 });
 await migrate(drizzle(migrationClient), config.db.migrationConfig);
