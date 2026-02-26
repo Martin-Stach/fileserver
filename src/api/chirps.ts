@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { createChirp, getChrip, getChrips } from "src/db/queries/chirps.js";
-import type { NewChirp } from "src/db/schema.js";
+import { createChirp, getChrip, getChrips } from "../db/queries/chirps.js";
+import type { NewChirp } from "../db/schema.js";
 import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 

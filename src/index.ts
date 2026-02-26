@@ -7,6 +7,7 @@ import {
 	handlerChirpsGet,
 	handlerChirpsGetSingle,
 } from "./api/chirps.js";
+import { handlerLogin } from "./api/auth.js";
 import { handlerMetrics } from "./api/metrics.js";
 import {
 	errorMiddleWare,
@@ -40,6 +41,10 @@ app.post("/admin/reset", (req, res, next) => {
 
 app.post("/api/users", (req, res, next) => {
 	Promise.resolve(handlerUsersCreate(req, res)).catch(next);
+});
+
+app.post("/api/login", (req, res, next) => {
+	Promise.resolve(handlerLogin(req, res)).catch(next);
 });
 
 app.post("/api/chirps", (req, res, next) => {

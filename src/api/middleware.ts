@@ -2,9 +2,9 @@ import type { NextFunction, Request, Response } from "express";
 import { config } from "../config.js";
 import {
 	BadRequestError,
-	ForbiddenError,
 	NotFoundError,
-	UnauthorizedError,
+	UserForbiddenError,
+	UserNotAuthenticatedError,
 } from "./errors.js";
 import { respondWithError } from "./json.js";
 
@@ -45,10 +45,10 @@ export function errorMiddleWare(
 	if (err instanceof BadRequestError) {
 		statusCode = 400;
 		message = err.message;
-	} else if (err instanceof UnauthorizedError) {
+	} else if (err instanceof UserNotAuthenticatedError) {
 		statusCode = 401;
 		message = err.message;
-	} else if (err instanceof ForbiddenError) {
+	} else if (err instanceof UserForbiddenError) {
 		statusCode = 403;
 		message = err.message;
 	} else if (err instanceof NotFoundError) {

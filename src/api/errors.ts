@@ -4,20 +4,20 @@ export class BadRequestError extends Error {
 	}
 }
 
-export class UnauthorizedError extends Error {
-	constructor() {
-		super("401 Unauthorized");
+export class UserNotAuthenticatedError extends Error {
+	constructor(message: string) {
+		super(message);
 	}
 }
 
-export class ForbiddenError extends Error {
-	constructor() {
-		super("403 Forbidden");
+export class UserForbiddenError extends Error {
+	constructor(message: string) {
+		super(message);
 	}
 }
 
 export class NotFoundError extends Error {
-	constructor() {
-		super("404 Not Found");
+	constructor(message: string) {
+		super(message);
 	}
 }
