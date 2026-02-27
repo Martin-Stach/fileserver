@@ -8,35 +8,35 @@ import { respondWithJSON } from "./json.js";
 export type UserResponse = Omit<NewUser, "hashed_password">;
 
 export async function handlerUsersCreate(req: Request, res: Response) {
-	type parameter = {
-		password: string;
-		email: string;
-	};
+  type parameter = {
+    password: string;
+    email: string;
+  };
 
-	const params: parameter = req.body;
+  const params: parameter = req.body;
 
-	if (!params.password) {
-		throw new BadRequestError("Password is required");
-	}
-	if (!params.email) {
-		throw new BadRequestError("Email is required");
-	}
+  if (!params.password) {
+    throw new BadRequestError("Password is required");
+  }
+  if (!params.email) {
+    throw new BadRequestError("Email is required");
+  }
 
-	const hash = await hashPassword(params.password);
+  const hash = await hashPassword(params.password);
 
-	const newUser = await createUser({
-		email: params.email,
-		hashed_password: hash,
-	} satisfies NewUser);
+  const newUser = await createUser({
+    email: params.email,
+    hashed_password: hash,
+  } satisfies NewUser);
 
-	if (!newUser) {
-		throw new Error("Email already exists");
-	}
+  if (!newUser) {
+    throw new Error("Email already exists");
+  }
 
-	respondWithJSON(res, 201, {
-		id: newUser.id,
-		email: newUser.email,
-		createdAt: newUser.createdAt,
-		updatedAt: newUser.updatedAt,
-	} satisfies UserResponse);
+  respondWithJSON(res, 201, {
+    id: newUser.id,
+    email: newUser.email,
+    createdAt: newUser.createdAt,
+    updatedAt: newUser.updatedAt,
+  } satisfies UserResponse);
 }

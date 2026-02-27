@@ -3,57 +3,57 @@ import jwt, { type JwtPayload } from "jsonwebtoken";
 import { UserNotAuthenticatedError } from "./api/errors";
 
 export async function hashPassword(password: string): Promise<string> {
-	return await argon2.hash(password);
+  return await argon2.hash(password);
 }
 
 export async function checkPasswordHash(
-	password: string,
-	hash: string,
+  password: string,
+  hash: string,
 ): Promise<boolean> {
-	if (!password) return false;
-	try {
-		return await argon2.verify(hash, password);
-	} catch {
-		return false;
-	}
+  if (!password) return false;
+  try {
+    return await argon2.verify(hash, password);
+  } catch {
+    return false;
+  }
 }
 
 type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 const TOKEN_ISSUER = "chirpy";
 
 export function makeJWT(
-	userID: string,
-	expiresIn: number,
-	secret: string,
+  userID: string,
+  expiresIn: number,
+  secret: string,
 ): string {
-	const iat = Math.floor(Date.now() / 1000);
-	const payload: payload = {
-		iss: TOKEN_ISSUER,
-		sub: userID,
-		iat: iat,
-		exp: iat + expiresIn,
-	} satisfies payload;
-	const token = jwt.sign(payload, secret, { algorithm: "HS256" });
+  const iat = Math.floor(Date.now() / 1000);
+  const payload: payload = {
+    iss: TOKEN_ISSUER,
+    sub: userID,
+    iat: iat,
+    exp: iat + expiresIn,
+  } satisfies payload;
+  const token = jwt.sign(payload, secret, { algorithm: "HS256" });
 
-	return token;
+  return token;
 }
 
 export function validateJWT(tokenString: string, secret: string): string {
-	let decoded: payload;
-	try {
-		decoded = jwt.verify(tokenString, secret) as JwtPayload;
-		console.log("In validateJWT payload:", decoded);
-	} catch (_) {
-		throw new UserNotAuthenticatedError("Invalid token");
-	}
+  let decoded: payload;
+  try {
+    decoded = jwt.verify(tokenString, secret) as JwtPayload;
+    console.log("In validateJWT payload:", decoded);
+  } catch (_) {
+    throw new UserNotAuthenticatedError("Invalid token");
+  }
 
-	if (decoded.iss !== TOKEN_ISSUER) {
-		throw new UserNotAuthenticatedError("Invalid issuer");
-	}
+  if (decoded.iss !== TOKEN_ISSUER) {
+    throw new UserNotAuthenticatedError("Invalid issuer");
+  }
 
-	if (!decoded.sub) {
-		throw new UserNotAuthenticatedError("No user ID in token");
-	}
+  if (!decoded.sub) {
+    throw new UserNotAuthenticatedError("No user ID in token");
+  }
 
-	return decoded.sub;
+  return decoded.sub;
 }

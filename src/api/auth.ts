@@ -7,46 +7,50 @@ import { respondWithError, respondWithJSON } from "./json.js";
 import type { UserResponse } from "./users.js";
 
 export async function handlerLogin(req: Request, res: Response) {
-	type parameter = {
-		password: string;
-		email: string;
-	};
+  type parameter = {
+    password: string;
+    email: string;
+  };
 
-	const params: parameter = req.body;
+  const params: parameter = req.body;
 
-	if (!params.password) {
-		throw new BadRequestError("Password is required");
-	}
-	if (!params.email) {
-		throw new BadRequestError("Email is required");
-	}
+  if (!params.password) {
+    throw new BadRequestError("Password is required");
+  }
+  if (!params.email) {
+    throw new BadRequestError("Email is required");
+  }
 
-	let passwordValid = false;
-	const userLogin: NewUser = await getUserByEmail(params.email);
+  let passwordValid = false;
+  const userLogin: NewUser = await getUserByEmail(params.email);
 
-	if (!userLogin) {
-		respondWithError(res, 401, "Invalid email or password");
-		return;
-	}
+  if (!userLogin) {
+    respondWithError(res, 401, "Invalid email or password");
+    return;
+  }
 
-	if (!userLogin.hashed_password || userLogin.hashed_password === "unset") {
-		respondWithError(res, 401, "Invalid email or password");
-		return;
-	}
+  if (!userLogin.hashed_password || userLogin.hashed_password === "unset") {
+    respondWithError(res, 401, "Invalid email or password");
+    return;
+  }
 
-	passwordValid = await checkPasswordHash(
-		params.password,
-		userLogin.hashed_password,
-	);
+  passwordValid = await checkPasswordHash(
+    params.password,
+    userLogin.hashed_password,
+  );
 
-	if (passwordValid) {
-		respondWithJSON(res, 200, {
-			id: userLogin.id,
-			email: userLogin.email,
-			createdAt: userLogin.createdAt,
-			updatedAt: userLogin.updatedAt,
-		} satisfies UserResponse);
-	} else {
-		respondWithError(res, 401, "Invalid email or password");
-	}
+  if (passwordValid) {
+    respondWithJSON(res, 200, {
+      id: userLogin.id,
+      email: userLogin.email,
+      createdAt: userLogin.createdAt,
+      updatedAt: userLogin.updatedAt,
+    } satisfies UserResponse);
+  } else {
+    respondWithError(res, 401, "Invalid email or password");
+  }
+}
+
+export function getBearerToken(req: Request): string {
+  return "";
 }
