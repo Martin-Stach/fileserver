@@ -35,8 +35,8 @@ export async function handlerUsersCreate(req: Request, res: Response) {
 
   respondWithJSON(res, 201, {
     id: newUser.id,
-    email: newUser.email,
     createdAt: newUser.createdAt,
     updatedAt: newUser.updatedAt,
+    email: newUser.email,
   } satisfies UserResponse);
 }

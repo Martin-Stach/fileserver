@@ -16,6 +16,9 @@
     "enabled": true,
     "rules": {
       "recommended": true
+    },
+    "domains": {
+      "test": "recommended"
     }
   },
   "javascript": {
@@ -30,5 +33,22 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off"
+          }
+        }
+      }
+    }
+  ]
 }

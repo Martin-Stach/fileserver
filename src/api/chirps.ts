@@ -1,6 +1,9 @@
 import type { Request, Response } from "express";
+import { validateJWT } from "../auth.js";
+import { config } from "../config.js";
 import { createChirp, getChrip, getChrips } from "../db/queries/chirps.js";
 import type { NewChirp } from "../db/schema.js";
+import { getBearerToken } from "./auth.js";
 import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 
@@ -36,8 +39,15 @@ export async function handlerChirpsCreate(req: Request, res: Response) {
 
   const params: parameter = req.body;
 
-  if (!params.body || !params.userId) {
-    throw new BadRequestError("Body and UserId is required");
+  const token = getBearerToken(req);
+  const userId = validateJWT(token, config.jwt.secret);
+
+  if (!params.body) {
+    throw new BadRequestError("Body is required");
+  }
+
+  if (!userId) {
+    throw new Error("Token not valid");
   }
 
   const validatedChrip = handlerChirpsValidate(params.body);
@@ -48,7 +58,7 @@ export async function handlerChirpsCreate(req: Request, res: Response) {
 
   const result = await createChirp({
     body: validatedChrip,
-    userId: params.userId,
+    userId: userId,
   });
 
   respondWithJSON(res, 201, {

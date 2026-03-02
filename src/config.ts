@@ -13,9 +13,16 @@ type DBConfig = {
   migrationConfig: MigrationConfig;
 };
 
+type JWTConfig = {
+  defaultDuration: number;
+  secret: string;
+  issuer: string;
+};
+
 type Config = {
   api: APIConfig;
   db: DBConfig;
+  jwt: JWTConfig;
 };
 
 const migrationConfig: MigrationConfig = {
@@ -31,6 +38,11 @@ export const config: Config = {
   db: {
     url: envOrThrow("DB_URL"),
     migrationConfig: migrationConfig,
+  },
+  jwt: {
+    defaultDuration: 60 * 60, // 1 hour
+    secret: envOrThrow("JWT_SECRET"),
+    issuer: "chirpy",
   },
 };
 
