@@ -1,21 +1,26 @@
 import type { Request, Response } from "express";
-import { checkPasswordHash, makeJWT } from "../auth.js";
+import {
+  refreshToken,
+  revokeRefreshToken,
+  saveRefreshToken,
+} from "src/db/queries/saveRefreshToken.js";
+import { checkPasswordHash, makeJWT, makeRefreshToken } from "../auth.js";
 import { config } from "../config.js";
 import { getUserByEmail } from "../db/queries/users.js";
 import type { NewUser } from "../db/schema.js";
-import { BadRequestError } from "./errors.js";
+import { BadRequestError, UserNotAuthenticatedError } from "./errors.js";
 import { respondWithError, respondWithJSON } from "./json.js";
 import type { UserResponse } from "./users.js";
 
 type LoginResponse = UserResponse & {
   token: string;
+  refreshToken: string;
 };
 
 export async function handlerLogin(req: Request, res: Response) {
   type parameter = {
     password: string;
     email: string;
-    expiresIn?: number;
   };
 
   const params: parameter = req.body;
@@ -45,24 +50,27 @@ export async function handlerLogin(req: Request, res: Response) {
     userLogin.hashed_password,
   );
 
-  const DEFAULT_EXPIRE_TIME = config.jwt.defaultDuration;
-  const expireTime = Math.min(
-    DEFAULT_EXPIRE_TIME,
-    params.expiresIn ?? config.jwt.defaultDuration,
-  );
-
-  if (passwordValid) {
-    const token = makeJWT(userLogin.id, expireTime, config.jwt.secret);
-    respondWithJSON(res, 200, {
-      id: userLogin.id,
-      createdAt: userLogin.createdAt,
-      updatedAt: userLogin.updatedAt,
-      email: userLogin.email,
-      token: token,
-    } satisfies LoginResponse);
-  } else {
+  if (!passwordValid) {
     respondWithError(res, 401, "Invalid email or password");
+    return;
   }
+
+  const token = makeJWT(userLogin.id, config.jwt.secret);
+
+  const refreshToken = makeRefreshToken();
+  const saved = await saveRefreshToken(refreshToken, userLogin.id);
+  if (!saved) {
+    throw new UserNotAuthenticatedError("Unable to save refresh token");
+  }
+
+  respondWithJSON(res, 200, {
+    id: userLogin.id,
+    createdAt: userLogin.createdAt,
+    updatedAt: userLogin.updatedAt,
+    email: userLogin.email,
+    token: token,
+    refreshToken: refreshToken,
+  } satisfies LoginResponse);
 }
 
 export function getBearerToken(req: Request) {
@@ -80,4 +88,26 @@ export function extractBearerToken(header: string) {
     throw new BadRequestError("Malformed authorization header");
   }
   return splitAuth[1];
+}
+
+export async function handlerRefresh(req: Request, res: Response) {
+  const bearerToken = getBearerToken(req);
+
+  const result = await refreshToken(bearerToken);
+
+  if (!result) {
+    throw new UserNotAuthenticatedError("No Token found");
+  }
+
+  const newJWT = makeJWT(result.user.id, config.jwt.secret);
+
+  respondWithJSON(res, 200, { token: newJWT } satisfies { token: string });
+}
+
+export async function handlerRevoke(req: Request, res: Response) {
+  const bearerToken = getBearerToken(req);
+
+  await revokeRefreshToken(bearerToken);
+
+  res.status(204).send();
 }

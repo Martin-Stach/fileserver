@@ -1,6 +1,8 @@
 import * as argon2 from "argon2";
 import jwt, { type JwtPayload } from "jsonwebtoken";
+import { randomBytes } from "node:crypto";
 import { UserNotAuthenticatedError } from "./api/errors";
+import { config } from "./config.js";
 
 export async function hashPassword(password: string): Promise<string> {
   return await argon2.hash(password);
@@ -21,17 +23,13 @@ export async function checkPasswordHash(
 type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 const TOKEN_ISSUER = "chirpy";
 
-export function makeJWT(
-  userID: string,
-  expiresIn: number,
-  secret: string,
-): string {
+export function makeJWT(userID: string, secret: string): string {
   const iat = Math.floor(Date.now() / 1000);
   const payload: payload = {
     iss: TOKEN_ISSUER,
     sub: userID,
     iat: iat,
-    exp: iat + expiresIn,
+    exp: iat + config.jwt.defaultDuration,
   } satisfies payload;
   const token = jwt.sign(payload, secret, { algorithm: "HS256" });
 
@@ -42,7 +40,6 @@ export function validateJWT(tokenString: string, secret: string): string {
   let decoded: payload;
   try {
     decoded = jwt.verify(tokenString, secret) as JwtPayload;
-    console.log("In validateJWT payload:", decoded);
   } catch (_) {
     throw new UserNotAuthenticatedError("Invalid token");
   }
@@ -56,4 +53,8 @@ export function validateJWT(tokenString: string, secret: string): string {
   }
 
   return decoded.sub;
+}
+
+export function makeRefreshToken(): string {
+  return randomBytes(32).toString("hex");
 }

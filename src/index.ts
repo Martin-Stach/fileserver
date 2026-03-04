@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import express from "express";
 import postgres from "postgres";
-import { handlerLogin } from "./api/auth.js";
+import { handlerLogin, handlerRefresh, handlerRevoke } from "./api/auth.js";
 import {
   handlerChirpsCreate,
   handlerChirpsGet,
@@ -47,12 +47,20 @@ app.post("/api/login", (req, res, next) => {
   Promise.resolve(handlerLogin(req, res)).catch(next);
 });
 
+app.post("/api/refresh", (req, res, next) => {
+  Promise.resolve(handlerRefresh(req, res)).catch(next);
+});
+
+app.post("/api/revoke", (req, res, next) => {
+  Promise.resolve(handlerRevoke(req, res)).catch(next);
+});
+
 app.post("/api/chirps", (req, res, next) => {
   Promise.resolve(handlerChirpsCreate(req, res)).catch(next);
 });
 
 app.get("/api/chirps", (req, res, next) => {
-  Promise.resolve(handlerChirpsGet(req, res).catch(next));
+  Promise.resolve(handlerChirpsGet(req, res)).catch(next);
 });
 
 app.get("/api/chirps/:chirpId", (req, res, next) => {
