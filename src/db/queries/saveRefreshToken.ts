@@ -1,6 +1,6 @@
 import { and, eq, gt, isNull } from "drizzle-orm";
 import { db } from "../index.js";
-import { type RefreshToken, refresh_tokens, users } from "../schema.js";
+import { refresh_tokens, users } from "../schema.js";
 
 export async function saveRefreshToken(newToken: string, userId: string) {
   const [result] = await db

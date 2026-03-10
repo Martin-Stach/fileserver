@@ -47,6 +47,10 @@ app.post("/api/login", (req, res, next) => {
   Promise.resolve(handlerLogin(req, res)).catch(next);
 });
 
+app.post("/api/users", (req, res, next) => {
+  Promise.resolve(handlerUpdateUser(req, res)).catch(next);
+});
+
 app.post("/api/refresh", (req, res, next) => {
   Promise.resolve(handlerRefresh(req, res)).catch(next);
 });
