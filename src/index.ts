@@ -16,7 +16,7 @@ import {
 } from "./api/middleware.js";
 import { handlerReadiness } from "./api/readiness.js";
 import { handlerReset } from "./api/reset.js";
-import { handlerUsersCreate } from "./api/users.js";
+import { handlerUpdateUser, handlerUsersCreate } from "./api/users.js";
 import { config } from "./config.js";
 
 const migrationClient = postgres(config.db.url, { max: 1 });
@@ -47,7 +47,7 @@ app.post("/api/login", (req, res, next) => {
   Promise.resolve(handlerLogin(req, res)).catch(next);
 });
 
-app.post("/api/users", (req, res, next) => {
+app.put("/api/users", (req, res, next) => {
   Promise.resolve(handlerUpdateUser(req, res)).catch(next);
 });
 

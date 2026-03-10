@@ -1,7 +1,8 @@
-import * as argon2 from "argon2";
-import jwt, { type JwtPayload } from "jsonwebtoken";
 import { randomBytes } from "node:crypto";
-import { UserNotAuthenticatedError } from "./api/errors";
+import * as argon2 from "argon2";
+import type { Request } from "express";
+import jwt, { type JwtPayload } from "jsonwebtoken";
+import { BadRequestError, UserNotAuthenticatedError } from "./api/errors.js";
 import { config } from "./config.js";
 
 export async function hashPassword(password: string): Promise<string> {
@@ -57,4 +58,20 @@ export function validateJWT(tokenString: string, secret: string): string {
 
 export function makeRefreshToken(): string {
   return randomBytes(32).toString("hex");
+}
+export function getBearerToken(req: Request) {
+  const authHeader = req.get("Authorization");
+  if (!authHeader) {
+    throw new UserNotAuthenticatedError("Malformed authorization header");
+  }
+
+  return extractBearerToken(authHeader);
+}
+
+export function extractBearerToken(header: string) {
+  const splitAuth = header.split(" ");
+  if (splitAuth.length < 2 || splitAuth[0] !== "Bearer") {
+    throw new UserNotAuthenticatedError("Malformed authorization header");
+  }
+  return splitAuth[1];
 }

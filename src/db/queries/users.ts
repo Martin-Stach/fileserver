@@ -24,11 +24,11 @@ export async function getUserByEmail(email: string) {
   return result;
 }
 
-export async function updateUser(userData: NewUser) {
+export async function updateUser(id: string, email: string, hashed_password: string) {
   const [result] = await db
     .update(users)
-    .set({ email: userData.email, hashed_password: userData.hashed_password })
-    .where(eq(users.id, userData.id))
+    .set({ email: email, hashed_password: hashed_password })
+    .where(eq(users.id, id))
     .returning();
   return result;
 }

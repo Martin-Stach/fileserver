@@ -1,9 +1,8 @@
 import type { Request, Response } from "express";
-import { validateJWT } from "../auth.js";
+import { getBearerToken, validateJWT } from "../auth.js";
 import { config } from "../config.js";
 import { createChirp, getChrip, getChrips } from "../db/queries/chirps.js";
 import type { NewChirp } from "../db/schema.js";
-import { getBearerToken } from "./auth.js";
 import { BadRequestError } from "./errors.js";
 import { respondWithJSON } from "./json.js";
 

@@ -1,7 +1,12 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { extractBearerToken } from "./api/auth";
 import { BadRequestError, UserNotAuthenticatedError } from "./api/errors";
-import { checkPasswordHash, hashPassword, makeJWT, validateJWT } from "./auth";
+import {
+  checkPasswordHash,
+  extractBearerToken,
+  hashPassword,
+  makeJWT,
+  validateJWT,
+} from "./auth";
 
 describe("Password Hashing", () => {
   const password1 = "correctPassword123!";
@@ -47,7 +52,7 @@ describe("JWT Functions", () => {
   let validToken: string;
 
   beforeAll(() => {
-    validToken = makeJWT(userID, 3600, secret);
+    validToken = makeJWT(userID, secret);
   });
 
   it("should validate a valid token", () => {

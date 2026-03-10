@@ -1,11 +1,16 @@
 import type { Request, Response } from "express";
 import {
+  checkPasswordHash,
+  getBearerToken,
+  makeJWT,
+  makeRefreshToken,
+} from "../auth.js";
+import { config } from "../config.js";
+import {
   refreshToken,
   revokeRefreshToken,
   saveRefreshToken,
-} from "src/db/queries/saveRefreshToken.js";
-import { checkPasswordHash, makeJWT, makeRefreshToken } from "../auth.js";
-import { config } from "../config.js";
+} from "../db/queries/saveRefreshToken.js";
 import { getUserByEmail } from "../db/queries/users.js";
 import type { NewUser } from "../db/schema.js";
 import { BadRequestError, UserNotAuthenticatedError } from "./errors.js";
@@ -71,23 +76,6 @@ export async function handlerLogin(req: Request, res: Response) {
     token: token,
     refreshToken: refreshToken,
   } satisfies LoginResponse);
-}
-
-export function getBearerToken(req: Request) {
-  const authHeader = req.get("Authorization");
-  if (!authHeader) {
-    throw new BadRequestError("Malformed authorization header");
-  }
-
-  return extractBearerToken(authHeader);
-}
-
-export function extractBearerToken(header: string) {
-  const splitAuth = header.split(" ");
-  if (splitAuth.length < 2 || splitAuth[0] !== "Bearer") {
-    throw new BadRequestError("Malformed authorization header");
-  }
-  return splitAuth[1];
 }
 
 export async function handlerRefresh(req: Request, res: Response) {
