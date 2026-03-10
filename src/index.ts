@@ -4,6 +4,7 @@ import express from "express";
 import postgres from "postgres";
 import { handlerLogin, handlerRefresh, handlerRevoke } from "./api/auth.js";
 import {
+  handlerChirpDelete,
   handlerChirpsCreate,
   handlerChirpsGet,
   handlerChirpsGetSingle,
@@ -70,6 +71,10 @@ app.get("/api/chirps", (req, res, next) => {
 app.get("/api/chirps/:chirpId", (req, res, next) => {
   Promise.resolve(handlerChirpsGetSingle(req, res).catch(next));
 });
+
+app.delete("/api/chirps/:chirpId", (req, res, next) => {
+  Promise.resolve(handlerChirpDelete(req, res).catch(next));
+})
 
 app.use(errorMiddleWare);
 

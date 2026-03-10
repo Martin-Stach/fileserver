@@ -1,10 +1,15 @@
 import type { Request, Response } from "express";
 import { getBearerToken, validateJWT } from "../auth.js";
 import { config } from "../config.js";
-import { createChirp, getChrip, getChrips } from "../db/queries/chirps.js";
+import {
+  createChirp,
+  deleteChrip,
+  getChrip,
+  getChrips,
+} from "../db/queries/chirps.js";
 import type { NewChirp } from "../db/schema.js";
 import { BadRequestError } from "./errors.js";
-import { respondWithJSON } from "./json.js";
+import { respondWithError, respondWithJSON } from "./json.js";
 
 export function handlerChirpsValidate(chirp: string) {
   let validatedChirp = chirp;
@@ -89,8 +94,41 @@ export async function handlerChirpsGetSingle(req: Request, res: Response) {
 
   const chirp: NewChirp = await getChrip(chirpId);
   if (!chirp) {
-    throw new Error("No Chirp found with provided ID");
+    respondWithError(res, 404, "No Chirp found with provided ID");
+    return;
   }
 
   respondWithJSON(res, 200, chirp);
+}
+
+export async function handlerChirpDelete(req: Request, res: Response) {
+  const { chirpId } = req.params;
+  if (typeof chirpId !== "string") {
+    throw new BadRequestError("Invalid Chirp ID");
+  }
+  const token = getBearerToken(req);
+  const userId = validateJWT(token, config.jwt.secret);
+
+  if (!userId) {
+    throw new Error("Token not valid");
+  }
+
+  const chirp: NewChirp = await getChrip(chirpId);
+
+  if (!chirp) {
+    respondWithError(res, 404, "No Chirp found with provided ID");
+    return;
+  }
+
+  if (chirp.userId !== userId) {
+    respondWithError(res, 403, "Not Authorised to delete not your chirps");
+    return;
+  }
+
+  try {
+    await deleteChrip(chirpId);
+    respondWithJSON(res, 204, "");
+  } catch (_) {
+    respondWithError(res, 404, "");
+  }
 }
