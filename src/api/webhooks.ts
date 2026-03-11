@@ -1,5 +1,8 @@
 import type { Request, Response } from "express";
+import { getAPIKey } from "src/auth.js";
+import { config } from "../config.js";
 import { upgradeUser } from "../db/queries/users.js";
+import { UserNotAuthenticatedError } from "./errors.js";
 
 export async function handlerPolkaWebhook(req: Request, res: Response) {
   type parameter = {
@@ -8,6 +11,11 @@ export async function handlerPolkaWebhook(req: Request, res: Response) {
       userId: string;
     };
   };
+
+  const apiKey = getAPIKey(req);
+  if (apiKey !== config.api.polkaKey) {
+    throw new UserNotAuthenticatedError("invalid api key");
+  }
 
   const params: parameter = req.body;
 
