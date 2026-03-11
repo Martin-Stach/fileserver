@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 import * as argon2 from "argon2";
 import type { Request } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import { BadRequestError, UserNotAuthenticatedError } from "./api/errors.js";
+import { UserNotAuthenticatedError } from "./api/errors.js";
 import { config } from "./config.js";
 
 export async function hashPassword(password: string): Promise<string> {

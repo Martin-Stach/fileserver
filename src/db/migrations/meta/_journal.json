@@ -29,6 +29,13 @@
       "when": 1772552400029,
       "tag": "0003_grey_black_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1773214976073,
+      "tag": "0004_tired_penance",
+      "breakpoints": true
     }
   ]
 }

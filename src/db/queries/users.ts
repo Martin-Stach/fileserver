@@ -24,11 +24,24 @@ export async function getUserByEmail(email: string) {
   return result;
 }
 
-export async function updateUser(id: string, email: string, hashed_password: string) {
+export async function updateUser(
+  id: string,
+  email: string,
+  hashed_password: string,
+) {
   const [result] = await db
     .update(users)
     .set({ email: email, hashed_password: hashed_password })
     .where(eq(users.id, id))
     .returning();
   return result;
+}
+
+export async function upgradeUser(id: string) {
+  const rows = await db
+    .update(users)
+    .set({ isChirpyRed: true })
+    .where(eq(users.id, id))
+    .returning();
+  return rows.length === 1;
 }

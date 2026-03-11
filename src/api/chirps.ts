@@ -3,12 +3,12 @@ import { getBearerToken, validateJWT } from "../auth.js";
 import { config } from "../config.js";
 import {
   createChirp,
-  deleteChrip,
+  deleteChirp,
   getChrip,
   getChrips,
 } from "../db/queries/chirps.js";
 import type { NewChirp } from "../db/schema.js";
-import { BadRequestError } from "./errors.js";
+import { BadRequestError, UserForbiddenError } from "./errors.js";
 import { respondWithError, respondWithJSON } from "./json.js";
 
 export function handlerChirpsValidate(chirp: string) {
@@ -121,14 +121,13 @@ export async function handlerChirpDelete(req: Request, res: Response) {
   }
 
   if (chirp.userId !== userId) {
-    respondWithError(res, 403, "Not Authorised to delete not your chirps");
-    return;
+    throw new UserForbiddenError("You can't delete this chirp");
   }
 
-  try {
-    await deleteChrip(chirpId);
-    respondWithJSON(res, 204, "");
-  } catch (_) {
-    respondWithError(res, 404, "");
+  const deleted = await deleteChirp(chirpId);
+  if (!deleted) {
+    throw new Error(`Failed to delete chirp with chirpId: ${chirpId}`);
   }
+
+  res.status(204).send();
 }

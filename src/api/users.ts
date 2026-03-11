@@ -39,6 +39,7 @@ export async function handlerUsersCreate(req: Request, res: Response) {
     createdAt: newUser.createdAt,
     updatedAt: newUser.updatedAt,
     email: newUser.email,
+    isChirpyRed: newUser.isChirpyRed,
   } satisfies UserResponse);
 }
 
@@ -71,5 +72,6 @@ export async function handlerUpdateUser(req: Request, res: Response) {
     createdAt: updatedUser.createdAt,
     updatedAt: updatedUser.updatedAt,
     email: updatedUser.email,
+    isChirpyRed: updatedUser.isChirpyRed,
   } satisfies Omit<NewUser, "hashed_password">);
 }

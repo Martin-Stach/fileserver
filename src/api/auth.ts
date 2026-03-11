@@ -75,6 +75,7 @@ export async function handlerLogin(req: Request, res: Response) {
     email: userLogin.email,
     token: token,
     refreshToken: refreshToken,
+    isChirpyRed: userLogin.isChirpyRed,
   } satisfies LoginResponse);
 }
 
